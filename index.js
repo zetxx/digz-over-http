@@ -1,10 +1,15 @@
 const {query} = require('digz');
 const Koa = require('koa');
 const Router = require('@koa/router');
-const {listen} = require('rc')(require('./package.json').name, {listen: 3000});
+const {listen, template} = require('rc')(
+    require('./package.json').name,
+    {listen: 3000, template: 'default'}
+);
 
 const app = new Koa();
 const router = new Router();
+
+const tmpl = require(`./templates/${template}.js`);
 
 router.get('/:host/:port/:wait', async(ctx, next) => {
     const {params: {host, port, wait}} = ctx;
@@ -13,13 +18,19 @@ router.get('/:host/:port/:wait', async(ctx, next) => {
     await new Promise((res, rej) => {
         setTimeout(async() => {
             const d = new Date();
-            const timestr = [d.getHours(), d.getMinutes()].join(':');
-            const s = await query({
+            const timestr = [
+                d.getHours(),
+                d.getMinutes()
+            ].join(':');
+            const sq = await query({
                 host,
                 port
             });
-            ctx.body = [timestr, s.players_connected].join('| ');
-            console.info(s);
+            ctx.body = tmpl({
+                timestr,
+                sq
+            });
+            console.info(sq);
             res();
         }, waitTime * 1000);
     });
