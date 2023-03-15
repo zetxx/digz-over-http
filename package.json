@@ -7,7 +7,8 @@
     "dependencies": {
         "digz": "1.1.10",
         "koa": "2.14.1",
-        "@koa/router": "12.0.0"
+        "@koa/router": "12.0.0",
+        "rc": "1.2.8"
     },
     "repository": {
         "url": "https://github.com/zetxx/digz-over-http.git"
