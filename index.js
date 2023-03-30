@@ -27,6 +27,11 @@ router.get('/:host/:port/:wait', async(ctx, next) => {
                     host,
                     port
                 });
+                console.info(sq);
+                res(tmpl({
+                    timestr,
+                    sq
+                }));
             } catch (e) {
                 console.error(e);
                 return res({
@@ -39,11 +44,6 @@ router.get('/:host/:port/:wait', async(ctx, next) => {
                     }
                 });
             }
-            console.info(sq);
-            res(tmpl({
-                timestr,
-                sq
-            }));
         }, waitTime * 1000);
     });
     ctx.body = res;
