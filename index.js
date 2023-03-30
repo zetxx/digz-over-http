@@ -15,25 +15,38 @@ router.get('/:host/:port/:wait', async(ctx, next) => {
     const {params: {host, port, wait}} = ctx;
     const waitTime = (isNaN(wait) && 60) || parseInt(wait);
     console.info(`will query ${host}:${port} after ${waitTime} sec.`)
-    await new Promise((res, rej) => {
+    const res = await new Promise((res, rej) => {
         setTimeout(async() => {
             const d = new Date();
             const timestr = [
                 d.getHours(),
                 d.getMinutes()
             ].join(':');
-            const sq = await query({
-                host,
-                port
-            });
-            ctx.body = tmpl({
+            try {
+                const sq = await query({
+                    host,
+                    port
+                });
+            } catch (e) {
+                console.error(e);
+                return res({
+                    error: {
+                        text: 'server made boo boo',
+                        original: {
+                            message: e.message,
+                            stack: e.stack
+                        }
+                    }
+                });
+            }
+            console.info(sq);
+            res(tmpl({
                 timestr,
                 sq
-            });
-            console.info(sq);
-            res();
+            }));
         }, waitTime * 1000);
     });
+    ctx.body = res;
 });
 
 app
