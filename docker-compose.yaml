@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+
+  digz-over-http:
+    build: .
+    container_name: digz-over-http
+    ports:
+      - "31333:3000"
